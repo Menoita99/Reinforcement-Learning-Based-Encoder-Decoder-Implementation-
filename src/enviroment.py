@@ -6,7 +6,7 @@ from random import randint
 
 class Environment:
 
-    def __init__(self, useWindowState=False, windowSize=4, market="EUR_USD", timeframe="D",train=True):
+    def __init__(self, useWindowState=False, windowSize=4, market="EUR_USD", timeframe="H12",train=True):
         self.market = market
         self.timeframe = timeframe
         self.useWindowState = useWindowState
@@ -15,7 +15,7 @@ class Environment:
         self.currentCandle = 0
 
         if self.useWindowState:
-            self.candles = deque([None] * windowSize)
+            self.candles = deque([None] * self.windowSize,maxlen=windowSize)
         self._loadData(train)
 
         self.actualAction = Actions.Noop

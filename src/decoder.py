@@ -12,3 +12,4 @@ class PolicyNet(nn.Module):
 
         def forward(self, input):
             return self.net(input)
+print(5e2)
