@@ -1,25 +1,29 @@
 import enum
 import configparser
 from mysql import connector
+from collections import deque
+from random import randint
 
 class Environment:
 
-    def __init__(self, windowState=False, market="EUR/USD", timeframe="D", iniCountBalance=1000):
-        self.iniCountBalance = iniCountBalance
+    def __init__(self, useWindowState=False, windowSize=4, market="EUR_USD", timeframe="D",train=True):
         self.market = market
         self.timeframe = timeframe
-        self.windowState = windowState
-        self.currentTransaction = None
-        self.currentCandle = None
-        self.candleIterator = []  #TODO Load with pythorch from db
-        if (windowState):
-            self.candles = []
+        self.useWindowState = useWindowState
+        self.windowSize = windowSize
+        self.ownShare = False
+        self.currentCandle = 0
 
-        self._loadData()
+        if self.useWindowState:
+            self.candles = deque([None] * windowSize)
+        self._loadData(train)
+
+        self.actualAction = Actions.Noop
+        self.price1 = self.data[0][3]
 
 
 
-    def _loadData(self):
+    def _loadData(self,train):
         config = configparser.RawConfigParser()
         config.read('application.properties')
 
@@ -29,30 +33,69 @@ class Environment:
             password=config.get('Database', 'database.password'),
             database=config.get('Database', 'database.db')
         )
-
         mycursor = mydb.cursor()
-        mycursor.execute("SELECT * FROM forexdb.candlestick where market='EUR_USD' and timeframe='W';")
-        myresult = mycursor.fetchone()
-        print(myresult)
+        select = "SELECT open,high,low, close FROM forexdb.candlestick where market='{}' and timeframe='{}' order by datetime asc;".format(self.market,self.timeframe)
+
+        mycursor.execute(select)
+        self.data = mycursor.fetchall()
+        if(train):
+            self.data = self.data[:int(len(self.data)*0.8)]
+        else:
+            self.data = self.data[int(len(self.data) * 0.2):]
+
 
     def reset(self):
-        #TODO
+        self.ownShare = False
+        self.currentCandle = 0
+        if self.useWindowState:
+            self.candles = [None] * self.windowSize
         return
 
+
     def initState(self):
-        # TODO
-        return (0,0,0,0)
+        if self.useWindowState:
+            output = [None] * self.windowSize
+            for i in range(self.windowSize):
+                output[i] = self.data[i]
+                self.candles.popleft()
+                self.candles.append(self.data[i])
+            self.currentCandle = self.windowSize
+            return output
+        else:
+            self.currentCandle = 1
+            return self.data[0]
+
 
     def step(self,action):
-        # TODO
-        print("step")
+        state = self.data[self.currentCandle]
+        if self.useWindowState:
+            self.candles.popleft()
+            self.candles.append(state)
+            state = self.candles
+
+        output=state, self.reward(action), self.currentCandle >= len(self.data)
+        self.currentCandle += 1
+        return output
+
 
     """
         Here we should use ask price and bid price to simulate the real world trade application
     """
-    def _reward(self,action):
-        # TODO implement reward function
-        return 0
+    def reward(self,action):
+        price2 = self.data[self.currentCandle][3]
+        if self.actualAction != action and action != Actions.Noop:
+            self.price1 = price2
+
+        if action == Actions.Buy or (action == Actions.Noop and self.ownShare):
+            reward = ((price2/self.price1) - 1)*100
+            print("As buy")
+            self.actualAction = action
+            return reward
+        else:
+            reward = ((self.price1/price2) - 1)*100
+            print("As sell")
+            self.actualAction = action
+            return reward
 
 
 
@@ -63,9 +106,16 @@ class Actions(enum.Enum):
 
     @staticmethod
     def random():
-        #TODO
-        return Actions.Buy
+        rand = randint(0, 2)
+        if rand == 0:
+            return Actions.Buy
+        elif rand == 1:
+            return Actions.Sell
+        else:
+            return Actions.Noop
 
 
-
-Environment()
+env = Environment(useWindowState=True)
+print(env.initState())
+for _ in range(100):
+    print(env.step(Actions.Noop))
