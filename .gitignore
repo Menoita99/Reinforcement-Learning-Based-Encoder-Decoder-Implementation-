@@ -127,6 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+py_env/
 src/application.properties
 src/application.properties
 .idea/workspace.xml
