@@ -7,7 +7,7 @@ from random import randint
 
 class Environment:
 
-    def __init__(self, useWindowState=False, windowSize=4, market="EUR_USD", timeframe="H12", train=True):
+    def __init__(self, useWindowState=False, windowSize=4, market="EUR_USD", timeframe="D",train=True):
         self.market = market
         self.timeframe = timeframe
         self.useWindowState = useWindowState
@@ -19,7 +19,7 @@ class Environment:
             self.candles = deque([None] * self.windowSize, maxlen=windowSize)
         self._loadData(train)
 
-        self.actualAction = Actions.Sell
+        self.prevAction = Actions.Sell
         self.price1 = self.data[0][3]
 
     def _loadData(self, train):
@@ -48,7 +48,7 @@ class Environment:
         self.currentCandle = 0
         if self.useWindowState:
             self.candles = [None] * self.windowSize
-        return self.initState(self)
+        return self.initState()
 
     def initState(self):
         if self.useWindowState:
@@ -70,7 +70,7 @@ class Environment:
             self.candles.append(state)
             state = self.candles
 
-        output = state, self.reward(action), self.currentCandle >= len(self.data), "TODO info"
+        output=state, self.reward(action), self.currentCandle+1 >= len(self.data),"TODO info"
         self.currentCandle += 1
         return output
 
@@ -80,20 +80,23 @@ class Environment:
 
     def reward(self, action):
         price2 = self.data[self.currentCandle][3]
-        if self.actualAction != action and action != Actions.Noop:
+        if self.prevAction != action and action != Actions.Noop:
             self.price1 = price2
 
         if action == Actions.Buy or (action == Actions.Noop and self.ownShare):
-            reward = ((price2 / self.price1) - 1) * 100
-            self.actualAction = action
+            reward = ((price2/self.price1) - 1)*100
+            self.prevAction = action
+            self.ownShare = True
             return reward
         else:
-            reward = ((self.price1 / price2) - 1) * 100
-            self.actualAction = action
+            reward = ((self.price1/price2) - 1)*100
+            self.prevAction = action
+            self.ownShare = False
             return reward
 
 
-class Actions(enum.Enum):
+
+class Actions(enum.IntEnum):
     Buy = 0
     Sell = 1
     Noop = 2
@@ -107,9 +110,3 @@ class Actions(enum.Enum):
             return Actions.Sell
         else:
             return Actions.Noop
-
-
-env = Environment(useWindowState=True)
-print(env.initState())
-for _ in range(100):
-    print(env.step(Actions.Noop))

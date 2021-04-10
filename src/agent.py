@@ -6,7 +6,7 @@ from src.metricLogger import MetricLogger
 import random, datetime, os, copy
 from src.decoder import PolicyNet
 from collections import deque
-
+from pathlib import Path
 
 class Agent:
 
@@ -18,27 +18,25 @@ class Agent:
 
         self.use_cuda = torch.cuda.is_available()
 
-        self.policyNet = PolicyNet(self.feature_dim, len(Actions)).float()
-        self.targetNet = copy.deepcopy(self.policyNet)
+        print("Using cuda ",self.use_cuda)
+       # self.policyNet = PolicyNet(feature_dim, len(Actions)).float()
+        self.net = PolicyNet(feature_dim,6, len(Actions)).float()
 
-        # Q_target parameters are frozen.
-        for p in self.targetNet.parameters():
-            p.requires_grad = False
 
         if self.use_cuda:
-            self.net = self.net.to(device="cuda")
+            self.policyNet = self.net.to(device="cuda")
 
         self.exploration_rate = 1
         self.exploration_rate_decay = 0.99999975
         self.exploration_rate_min = 0.05
 
-        self.save_every = 1e4  # no. of experiences between saving Policy Net
+        self.save_every = 1e5  # no. of experiences between saving Policy Net
 
         self.curr_step = 0
 
         self.batch_size = batch_size
-        self.gamma = .9
-        self.optimizer = torch.optim.Adam(self.policyNet.parameters(), lr=0.00025)
+        self.gamma = .95
+        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=0.00025)
         self.loss_fn = torch.nn.SmoothL1Loss()#Huber loss
 
         self.burnin = 5e2  # min. experiences before training
@@ -58,8 +56,8 @@ class Agent:
                 state = torch.tensor(state).cuda()
             else:
                 state = torch.tensor(state)
-            action_values = self.policyNet(state)
-            action_idx = torch.argmax(action_values, axis=1).item()
+            action_values = self.net(state,model="policy")
+            action_idx = torch.argmax(action_values, axis=0).item()
             action = Actions(action_idx)
 
         # decrease exploration_rate
@@ -127,21 +125,16 @@ class Agent:
 
 
     def td_estimate(self, state, action):
-        #TODO add encoder code here
-        current_Q = self.policyNet(state)[
-            np.arange(0, self.batch_size), action
-        ]  # Q_online(s,a)
-        print("Current Q {}",current_Q)
+        current_Q = self.net(state,model="policy")
+        current_Q = current_Q[np.arange(0, self.batch_size), action]  # Q_online(s,a)
         return current_Q
 
     #line 13 paper
     @torch.no_grad()
     def td_target(self, reward, next_state, done):
-        next_state_Q = self.policyNet(next_state)
+        next_state_Q = self.net(next_state,model="policy")
         best_action = torch.argmax(next_state_Q, axis=1)
-        next_Q = self.targetNet(next_state)[
-            np.arange(0, self.batch_size), best_action
-        ]
+        next_Q = self.net(next_state,model="target")[np.arange(0, self.batch_size), best_action]
         return (reward + (1 - done.float()) * self.gamma * next_Q).float()
 
 
@@ -153,11 +146,11 @@ class Agent:
         return loss.item()
 
     def sync_Q_target(self):
-        self.targetNet.load_state_dict(self.policyNet.state_dict())
+        self.net.target.load_state_dict(self.net.policy.state_dict())
 
     def save(self):
         save_path = (self.save_dir / f"policy_net_{int(self.curr_step // self.save_every)}.chkpt")
-        torch.save(dict(model=self.policyNet.state_dict(), exploration_rate=self.exploration_rate),save_path,)
+        torch.save(dict(model=self.net.state_dict(), exploration_rate=self.exploration_rate),save_path,)
         print(f"policyNet saved to {save_path} at step {self.curr_step}")
 
 
@@ -196,5 +189,11 @@ class Agent:
 
             logger.log_episode()
 
-            if e % 20 == 0:
-                logger.record(episode=e, epsilon=self.exploration_rate, step=self.curr_step)
+          #  if e % 20 == 0:
+            logger.record(episode=e, epsilon=self.exploration_rate, step=self.curr_step)
+
+
+save_dir = Path("checkpoints") / datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+save_dir.mkdir(parents=True)
+
+Agent(feature_dim=4, save_dir=save_dir).train(int(5e4))
