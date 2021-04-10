@@ -21,12 +21,16 @@ class Agent:
         self.policyNet = PolicyNet(self.feature_dim, len(Actions)).float()
         self.targetNet = copy.deepcopy(self.policyNet)
 
+        # Q_target parameters are frozen.
+        for p in self.targetNet.parameters():
+            p.requires_grad = False
+
         if self.use_cuda:
             self.net = self.net.to(device="cuda")
 
         self.exploration_rate = 1
         self.exploration_rate_decay = 0.99999975
-        self.exploration_rate_min = 0.1
+        self.exploration_rate_min = 0.05
 
         self.save_every = 1e4  # no. of experiences between saving Policy Net
 
@@ -35,11 +39,11 @@ class Agent:
         self.batch_size = batch_size
         self.gamma = .9
         self.optimizer = torch.optim.Adam(self.policyNet.parameters(), lr=0.00025)
-        self.loss_fn = torch.nn.SmoothL1Loss()#TODO
+        self.loss_fn = torch.nn.SmoothL1Loss()#Huber loss
 
-        self.burnin = 1e2  # min. experiences before training
+        self.burnin = 5e2  # min. experiences before training
         self.learn_every = 1  # no. of experiences between updates to Q_online (3) speed up train
-        self.sync_every = 1e2  # no. of experiences between Q_target &
+        self.sync_every = 5e2  # no. of experiences between Q_target &
 
 
 
@@ -123,11 +127,14 @@ class Agent:
 
 
     def td_estimate(self, state, action):
+        #TODO add encoder code here
         current_Q = self.policyNet(state)[
             np.arange(0, self.batch_size), action
         ]  # Q_online(s,a)
+        print("Current Q {}",current_Q)
         return current_Q
 
+    #line 13 paper
     @torch.no_grad()
     def td_target(self, reward, next_state, done):
         next_state_Q = self.policyNet(next_state)
@@ -136,7 +143,6 @@ class Agent:
             np.arange(0, self.batch_size), best_action
         ]
         return (reward + (1 - done.float()) * self.gamma * next_Q).float()
-
 
 
     def update_Q_policy(self, td_estimate, td_target):

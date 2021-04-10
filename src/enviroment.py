@@ -18,7 +18,7 @@ class Environment:
             self.candles = deque([None] * self.windowSize,maxlen=windowSize)
         self._loadData(train)
 
-        self.actualAction = Actions.Noop
+        self.actualAction = Actions.Sell
         self.price1 = self.data[0][3]
 
 
@@ -49,7 +49,7 @@ class Environment:
         self.currentCandle = 0
         if self.useWindowState:
             self.candles = [None] * self.windowSize
-        return
+        return self.initState(self)
 
 
     def initState(self):
@@ -73,7 +73,7 @@ class Environment:
             self.candles.append(state)
             state = self.candles
 
-        output=state, self.reward(action), self.currentCandle >= len(self.data)
+        output=state, self.reward(action), self.currentCandle >= len(self.data), "TODO info"
         self.currentCandle += 1
         return output
 
@@ -88,12 +88,10 @@ class Environment:
 
         if action == Actions.Buy or (action == Actions.Noop and self.ownShare):
             reward = ((price2/self.price1) - 1)*100
-            print("As buy")
             self.actualAction = action
             return reward
         else:
             reward = ((self.price1/price2) - 1)*100
-            print("As sell")
             self.actualAction = action
             return reward
 

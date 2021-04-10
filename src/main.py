@@ -6,13 +6,13 @@ from src.agent import Agent
 from enviroment import Environment
 
 use_cuda = torch.cuda.is_available()
-print(f"Using CUDA: {use_cuda}")
-print()
+print(f"Using CUDA: {use_cuda}\n")
+
 
 save_dir = Path("checkpoints") / datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 save_dir.mkdir(parents=True)
 
-agent = Agent(state_dim=4, save_dir=save_dir)
+agent = Agent(feature_dim=4, save_dir=save_dir)
 env = Environment()
 
 logger = MetricLogger(save_dir)
