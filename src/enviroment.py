@@ -4,9 +4,10 @@ from mysql import connector
 from collections import deque
 from random import randint
 
+
 class Environment:
 
-    def __init__(self, useWindowState=False, windowSize=4, market="EUR_USD", timeframe="H12",train=True):
+    def __init__(self, useWindowState=False, windowSize=4, market="EUR_USD", timeframe="H12", train=True):
         self.market = market
         self.timeframe = timeframe
         self.useWindowState = useWindowState
@@ -15,15 +16,13 @@ class Environment:
         self.currentCandle = 0
 
         if self.useWindowState:
-            self.candles = deque([None] * self.windowSize,maxlen=windowSize)
+            self.candles = deque([None] * self.windowSize, maxlen=windowSize)
         self._loadData(train)
 
         self.actualAction = Actions.Sell
         self.price1 = self.data[0][3]
 
-
-
-    def _loadData(self,train):
+    def _loadData(self, train):
         config = configparser.RawConfigParser()
         config.read('application.properties')
 
@@ -34,15 +33,15 @@ class Environment:
             database=config.get('Database', 'database.db')
         )
         mycursor = mydb.cursor()
-        select = "SELECT open,high,low, close FROM forexdb.candlestick where market='{}' and timeframe='{}' order by datetime asc;".format(self.market,self.timeframe)
+        select = "SELECT open,high,low, close FROM forexdb.candlestick where market='{}' and timeframe='{}' order by datetime asc;".format(
+            self.market, self.timeframe)
 
         mycursor.execute(select)
         self.data = mycursor.fetchall()
-        if(train):
-            self.data = self.data[:int(len(self.data)*0.8)]
+        if (train):
+            self.data = self.data[:int(len(self.data) * 0.8)]
         else:
             self.data = self.data[int(len(self.data) * 0.2):]
-
 
     def reset(self):
         self.ownShare = False
@@ -50,7 +49,6 @@ class Environment:
         if self.useWindowState:
             self.candles = [None] * self.windowSize
         return self.initState(self)
-
 
     def initState(self):
         if self.useWindowState:
@@ -65,36 +63,34 @@ class Environment:
             self.currentCandle = 1
             return self.data[0]
 
-
-    def step(self,action):
+    def step(self, action):
         state = self.data[self.currentCandle]
         if self.useWindowState:
             self.candles.popleft()
             self.candles.append(state)
             state = self.candles
 
-        output=state, self.reward(action), self.currentCandle >= len(self.data), "TODO info"
+        output = state, self.reward(action), self.currentCandle >= len(self.data), "TODO info"
         self.currentCandle += 1
         return output
-
 
     """
         Here we should use ask price and bid price to simulate the real world trade application
     """
-    def reward(self,action):
+
+    def reward(self, action):
         price2 = self.data[self.currentCandle][3]
         if self.actualAction != action and action != Actions.Noop:
             self.price1 = price2
 
         if action == Actions.Buy or (action == Actions.Noop and self.ownShare):
-            reward = ((price2/self.price1) - 1)*100
+            reward = ((price2 / self.price1) - 1) * 100
             self.actualAction = action
             return reward
         else:
-            reward = ((self.price1/price2) - 1)*100
+            reward = ((self.price1 / price2) - 1) * 100
             self.actualAction = action
             return reward
-
 
 
 class Actions(enum.Enum):
