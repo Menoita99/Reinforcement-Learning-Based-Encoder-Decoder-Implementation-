@@ -2,7 +2,7 @@ from enviroment import Environment
 from enviroment import Actions
 import numpy as np
 import torch
-from torch import nn
+from metricLogger import MetricLogger
 import random, datetime, os, copy
 from decoder import PolicyNet
 from collections import deque
@@ -156,6 +156,39 @@ class Agent:
 
 
 
-    def train(self,episode):
-        #TODO
-        pass
+    def train(self,episodes):
+        logger = MetricLogger(self.save_dir)
+
+        for e in range(episodes):
+
+            state = self.env.reset()
+
+            #Trade the market!
+            while True:
+
+                # Run agent on the state
+                action = self.act(state)
+
+                # Agent performs action
+                next_state, reward, done, info = self.env.step(action)
+
+                # Remember
+                self.cache(state, next_state, action, reward, done)
+
+                # Learn
+                q, loss = self.learn()
+
+                # Logging
+                logger.log_step(reward, loss, q)
+
+                # Update state
+                state = next_state
+
+                # Check if end of game
+                if done:
+                    break
+
+            logger.log_episode()
+
+            if e % 20 == 0:
+                logger.record(episode=e, epsilon=self.exploration_rate, step=self.curr_step)
