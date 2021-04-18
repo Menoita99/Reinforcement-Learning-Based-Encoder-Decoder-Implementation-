@@ -3,14 +3,18 @@ from enviroment import Actions
 import numpy as np
 import torch
 from metricLogger import MetricLogger
-import random, copy, datetime
+import random
 from decoder import PolicyNet
 from collections import deque
 from pathlib import Path
+from datetime import datetime
+import time
+
+
 
 class Agent:
 
-    def __init__(self, save_dir,feature_dim,batch_size=32):
+    def __init__(self, save_dir,feature_dim,hidden_dim,batch_size=32):
         self.env = Environment()
         self.memory = deque(maxlen=100000)
         self.feature_dim = feature_dim
@@ -18,13 +22,11 @@ class Agent:
 
         self.use_cuda = torch.cuda.is_available()
 
-        print("Using cuda ",self.use_cuda)
-       # self.policyNet = PolicyNet(feature_dim, len(Actions)).float()
-        self.net = PolicyNet(feature_dim,6, len(Actions)).float()
-
+        print("Using cuda",self.use_cuda)
+        self.net = PolicyNet(feature_dim,hidden_dim, len(Actions)).float()
 
         if self.use_cuda:
-            self.policyNet = self.net.to(device="cuda")
+            self.net = self.net.to(device="cuda")
 
         self.exploration_rate = 1
         self.exploration_rate_decay = 0.99999975
@@ -41,7 +43,7 @@ class Agent:
 
         self.burnin = 5e2  # min. experiences before training
         self.learn_every = 1  # no. of experiences between updates to Q_online (3) speed up train
-        self.sync_every = 5e2  # no. of experiences between Q_target &
+        self.sync_every = 5e3  # no. of experiences between Q_target &
 
 
 
@@ -158,6 +160,13 @@ class Agent:
     def train(self,episodes):
         logger = MetricLogger(self.save_dir)
 
+        actiontime = 0
+        envStep = 0
+        cache = 0
+        learn = 0
+        logging = 0
+
+
         for e in range(episodes):
 
             state = self.env.reset()
@@ -165,20 +174,30 @@ class Agent:
             #Trade the market!
             while True:
 
+                start = time.time()
                 # Run agent on the state
                 action = self.act(state)
+                actiontime += time.time() - start
 
+                start = time.time()
                 # Agent performs action
                 next_state, reward, done, info = self.env.step(action)
+                envStep += time.time() - start
 
+                start = time.time()
                 # Remember
                 self.cache(state, next_state, action, reward, done)
+                cache += time.time() - start
 
+                start = time.time()
                 # Learn
                 q, loss = self.learn()
+                learn += time.time() - start
 
+                start = time.time()
                 # Logging
                 logger.log_step(reward, loss, q)
+                logging += time.time() - start
 
                 # Update state
                 state = next_state
@@ -189,11 +208,17 @@ class Agent:
 
             logger.log_episode()
 
+            print("Time taking action: ",actiontime)
+            print("Time taking env step: " , envStep)
+            print("Time caching: " , cache)
+            print("Time learning: " , learn)
+            print("Time logging: " , logging)
+
           #  if e % 20 == 0:
             logger.record(episode=e, epsilon=self.exploration_rate, step=self.curr_step)
 
 
-save_dir = Path("checkpoints") / datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 save_dir.mkdir(parents=True)
 
-Agent(feature_dim=4, save_dir=save_dir).train(int(5e4))
+Agent(feature_dim=4, hidden_dim=6,save_dir=save_dir).train(1)#int(5e4))

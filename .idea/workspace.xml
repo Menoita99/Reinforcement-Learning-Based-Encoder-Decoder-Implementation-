@@ -7,6 +7,18 @@
     <list default="true" id="2a5b45d7-7704-4aa4-96a9-3736bc493a0b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-11-17/log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-11-35/length_plot.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-11-35/log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-11-35/loss_plot.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-11-35/q_plot.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-11-35/reward_plot.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-12-34/log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-12-55/length_plot.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-12-55/log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-12-55/loss_plot.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-12-55/q_plot.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/checkpoints/2021-04-10T16-12-55/reward_plot.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/decoder.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/decoder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/enviroment.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/enviroment.py" afterDir="false" />
     </list>

@@ -3,7 +3,7 @@ import configparser
 from mysql import connector
 from collections import deque
 from random import randint
-
+import torch
 class Environment:
 
     def __init__(self, useWindowState=False, windowSize=4, market="EUR_USD", timeframe="D",train=True):

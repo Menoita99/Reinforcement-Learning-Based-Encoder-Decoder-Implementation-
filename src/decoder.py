@@ -10,9 +10,9 @@ class PolicyNet(nn.Module):
             nn.Linear(input_dim,hidden_dim),
             nn.ReLU(),
             nn.Linear(hidden_dim,output_dim),
-        )
+        ).to(device="cuda")
 
-        self.target = copy.deepcopy(self.policy)
+        self.target = copy.deepcopy(self.policy).to(device="cuda")
 
         # Q_target parameters are frozen.
         for p in self.target.parameters():
