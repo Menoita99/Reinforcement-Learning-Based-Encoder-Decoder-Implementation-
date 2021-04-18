@@ -3,7 +3,7 @@ import configparser
 from mysql import connector
 from collections import deque
 from random import randint
-
+import torch
 
 class Environment:
 
