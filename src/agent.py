@@ -1,5 +1,5 @@
-from enviroment import Environment
-from enviroment import Actions
+from src.enviroment import Environment
+from src.enviroment import Actions
 import numpy as np
 import torch
 from metricLogger import MetricLogger
@@ -221,4 +221,6 @@ class Agent:
 save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 save_dir.mkdir(parents=True)
 
+
 Agent(feature_dim=4, hidden_dim=6,save_dir=save_dir).train(1)#int(5e4))
+

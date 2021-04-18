@@ -1,9 +1,9 @@
 import torch
 from pathlib import Path
 import datetime
-from metricLogger import MetricLogger
+from src.metricLogger import MetricLogger
 from src.agent import Agent
-from enviroment import Environment
+from src.enviroment import Environment
 
 use_cuda = torch.cuda.is_available()
 print(f"Using CUDA: {use_cuda}\n")
