@@ -131,3 +131,5 @@ py_env/
 src/application.properties
 src/application.properties
 .idea/workspace.xml
+.idea/
+
