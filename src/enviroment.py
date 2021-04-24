@@ -8,7 +8,7 @@ import numpy as np
 
 class Environment:
 
-    def __init__(self, useWindowState=False, windowSize=4, market="BTC_USD", timeframe="D",train=True):
+    def __init__(self, useWindowState=False, windowSize=4, market="BTC_USD", timeframe="D",train=True,initialMoney=1000):
         self.market = market
         self.timeframe = timeframe
         self.useWindowState = useWindowState
@@ -20,8 +20,10 @@ class Environment:
             self.candles = deque([None] * self.windowSize, maxlen=windowSize)
         self._loadData(market,train)
 
-        self.prevAction = Actions.Sell
+        self.prevAction = Actions.Noop
         self.price1 = self.data[0][3]
+        self.transaction = [Actions.Sell, 0]
+        self.money = 1000
 
 
 
@@ -58,13 +60,13 @@ class Environment:
         self.data = self.data[:int(len(self.data) * 0.8)] if train else self.data[int(len(self.data) * 0.2):]
 
 
-
     def reset(self):
         self.ownShare = False
         self.currentCandle = 0
         if self.useWindowState:
             self.candles = [None] * self.windowSize
         return self.initState()
+
 
     def initState(self):
         if self.useWindowState:
@@ -86,7 +88,11 @@ class Environment:
             self.candles.append(state)
             state = self.candles
 
-        output=state, self.reward(action), self.currentCandle+1 >= len(self.data),"TODO info"
+        price = self.data[self.currentCandle][3]
+        self.trade(action,price)
+        currentMoney = self.money if self.transaction[1] == 0 else self.transaction[1] * price
+
+        output = state, self.reward(action), self.currentCandle+1 >= len(self.data), [currentMoney]
         self.currentCandle += 1
         return output
 
@@ -110,6 +116,16 @@ class Environment:
             self.prevAction = action
             self.ownShare = False
             return reward
+
+
+
+    def trade(self, action, price):
+        prevAction, units = self.transaction
+        if prevAction == Actions.Sell and action == Actions.Buy:
+            self.transaction = [action,self.money/price]
+        elif prevAction == Actions.Buy and action == Actions.Sell:
+            self.money = price * units * 0.99
+            self.transaction = [action, 0]
 
 
 

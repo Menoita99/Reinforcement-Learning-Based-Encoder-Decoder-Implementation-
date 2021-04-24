@@ -1,4 +1,3 @@
-import torch
 from torch import nn
 
 
@@ -8,7 +7,7 @@ class Mlp(nn.Module):
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(input_dim,128),
-           # nn.BatchNorm1d(num_features=20),
+            # nn.BatchNorm1d(num_features=20),
             nn.Linear(128, features_dim),
         )
 

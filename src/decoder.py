@@ -14,9 +14,7 @@ class PolicyNet(nn.Module):
         ).to(device=device)
 
         if encoder is not None:
-            self.policy = nn.Sequential(
-                encoder,
-                self.policy)
+            self.policy = nn.Sequential(encoder, self.policy)
 
         self.target = copy.deepcopy(self.policy).to(device=device)
 
