@@ -4,6 +4,7 @@ from mysql import connector
 from collections import deque
 from random import randint
 import pandas as pd
+import numpy as np
 
 class Environment:
 
@@ -46,6 +47,8 @@ class Environment:
             df = pd.read_csv(r'data\{}.csv'.format(market))
             df = df.dropna(how='any', axis=0)
             df = df[['Open', 'High', 'Low', 'Close']]
+            df = df.astype(np.float32)
+
             self.data = []
             for index, rows in df.iterrows():
                 row = [rows.Open, rows.High, rows.Low, rows.Close]
@@ -98,12 +101,12 @@ class Environment:
             self.price1 = price2
 
         if action == Actions.Buy or (action == Actions.Noop and self.ownShare):
-            reward = (price2/self.price1)*100 - 1
+            reward = ((price2/self.price1) - 1)*100 - 1  # -1 to simulate tax
             self.prevAction = action
             self.ownShare = True
             return reward
         else:
-            reward = (self.price1/price2)*100 - 1
+            reward = ((self.price1/price2) - 1)*100 - 1  # -1 to simulate tax
             self.prevAction = action
             self.ownShare = False
             return reward
