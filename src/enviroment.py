@@ -3,11 +3,11 @@ import configparser
 from mysql import connector
 from collections import deque
 from random import randint
-import torch
+import pandas as pd
 
 class Environment:
 
-    def __init__(self, useWindowState=False, windowSize=4, market="EUR_USD", timeframe="D",train=True):
+    def __init__(self, useWindowState=False, windowSize=4, market="BTC_USD", timeframe="D",train=True):
         self.market = market
         self.timeframe = timeframe
         self.useWindowState = useWindowState
@@ -17,31 +17,44 @@ class Environment:
 
         if self.useWindowState:
             self.candles = deque([None] * self.windowSize, maxlen=windowSize)
-        self._loadData(train)
+        self._loadData(market,train)
 
         self.prevAction = Actions.Sell
         self.price1 = self.data[0][3]
 
-    def _loadData(self, train):
-        config = configparser.RawConfigParser()
-        config.read('application.properties')
 
-        mydb = connector.connect(
-            host=config.get('Database', 'database.host'),
-            user=config.get('Database', 'database.user'),
-            password=config.get('Database', 'database.password'),
-            database=config.get('Database', 'database.db')
-        )
-        mycursor = mydb.cursor()
-        select = "SELECT open,high,low, close FROM forexdb.candlestick where market='{}' and timeframe='{}' order by datetime asc;".format(
-            self.market, self.timeframe)
 
-        mycursor.execute(select)
-        self.data = mycursor.fetchall()
-        if (train):
-            self.data = self.data[:int(len(self.data) * 0.8)]
+    def _loadData(self,market, train):
+        if market == "EUR_USD":
+            config = configparser.RawConfigParser()
+            config.read('application.properties')
+
+            mydb = connector.connect(
+                host=config.get('Database', 'database.host'),
+                user=config.get('Database', 'database.user'),
+                password=config.get('Database', 'database.password'),
+                database=config.get('Database', 'database.db')
+            )
+            mycursor = mydb.cursor()
+            select = "SELECT open,high,low, close FROM forexdb.candlestick where market='{}' and timeframe='{}' order by datetime asc;".format(
+                self.market, self.timeframe)
+
+            mycursor.execute(select)
+            self.data = mycursor.fetchall()
+
         else:
-            self.data = self.data[int(len(self.data) * 0.2):]
+            df = pd.read_csv(r'data\{}.csv'.format(market))
+            df = df.dropna(how='any', axis=0)
+            df = df[['Open', 'High', 'Low', 'Close']]
+            self.data = []
+            for index, rows in df.iterrows():
+                row = [rows.Open, rows.High, rows.Low, rows.Close]
+                self.data.append(row)
+
+
+        self.data = self.data[:int(len(self.data) * 0.8)] if train else self.data[int(len(self.data) * 0.2):]
+
+
 
     def reset(self):
         self.ownShare = False
@@ -74,22 +87,23 @@ class Environment:
         self.currentCandle += 1
         return output
 
+
+
     """
         Here we should use ask price and bid price to simulate the real world trade application
     """
-
     def reward(self, action):
         price2 = self.data[self.currentCandle][3]
         if self.prevAction != action and action != Actions.Noop:
             self.price1 = price2
 
         if action == Actions.Buy or (action == Actions.Noop and self.ownShare):
-            reward = ((price2/self.price1) - 1)*100
+            reward = (price2/self.price1)*100 - 1
             self.prevAction = action
             self.ownShare = True
             return reward
         else:
-            reward = ((self.price1/price2) - 1)*100
+            reward = (self.price1/price2)*100 - 1
             self.prevAction = action
             self.ownShare = False
             return reward

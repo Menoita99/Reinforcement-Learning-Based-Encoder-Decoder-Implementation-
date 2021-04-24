@@ -1,3 +1,4 @@
+from src.encoder import Mlp
 from src.enviroment import Environment
 from src.enviroment import Actions
 import numpy as np
@@ -10,23 +11,21 @@ from pathlib import Path
 from datetime import datetime
 import time
 
-
-
 class Agent:
 
-    def __init__(self, save_dir,feature_dim,hidden_dim,batch_size=32):
+    def __init__(self, save_dir,encoder,feature_dim,hidden_dim,seed,batch_size=32):
         self.env = Environment()
         self.memory = deque(maxlen=100000)
         self.feature_dim = feature_dim
         self.save_dir = save_dir
 
         self.use_cuda = torch.cuda.is_available()
-
+        self.device = "cuda" if self.use_cuda else "cpu"
         print("Using cuda",self.use_cuda)
-        self.net = PolicyNet(feature_dim,hidden_dim, len(Actions)).float()
+        self.net = PolicyNet(encoder,feature_dim,hidden_dim, len(Actions),self.device).float()
 
         if self.use_cuda:
-            self.net = self.net.to(device="cuda")
+            self.net = self.net.to(device=self.device)
 
         self.exploration_rate = 1
         self.exploration_rate_decay = 0.99999975
@@ -45,6 +44,12 @@ class Agent:
         self.learn_every = 1  # no. of experiences between updates to Q_online (3) speed up train
         self.sync_every = 5e3  # no. of experiences between Q_target &
 
+        self.setSeeds(seed)
+
+    def setSeeds(self,seed):
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
 
 
     """Given a state, choose an epsilon-greedy action"""
@@ -218,9 +223,9 @@ class Agent:
             logger.record(episode=e, epsilon=self.exploration_rate, step=self.curr_step)
 
 
-save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S") / "Mlp 4-10_10-20"
 save_dir.mkdir(parents=True)
 
 
-Agent(feature_dim=4, hidden_dim=6,save_dir=save_dir).train(1)#int(5e4))
+Agent(encoder=Mlp(4,10),feature_dim=10, hidden_dim=20,save_dir=save_dir,seed=1).train(int(5e3))#int(5e4))
 
