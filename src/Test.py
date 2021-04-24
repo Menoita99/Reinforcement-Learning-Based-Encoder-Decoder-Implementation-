@@ -1,4 +1,5 @@
 from torch import nn
+import numpy as np
 import pandas as pd
 
 class Test(nn.Module):
@@ -20,10 +21,14 @@ class Test(nn.Module):
 df = pd.read_csv(r'data\{}.csv'.format('BTC_USD'))
 df = df.dropna(how='any', axis=0)
 df = df[['Open','High','Low','Close']]
+df = df.astype(np.float32)
+print(df.dtypes)
 
+"""
 Row_list = []
 for index, rows in df.iterrows():
     row = [rows.Open, rows.High, rows.Low, rows.Close]
     Row_list.append(row)
 
 print(Row_list)
+"""
