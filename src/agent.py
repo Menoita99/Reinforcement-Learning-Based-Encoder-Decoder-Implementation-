@@ -41,7 +41,7 @@ class Agent:
         self.loss_fn = torch.nn.SmoothL1Loss()#Huber loss
 
         self.burnin = 5e2  # min. experiences before training
-        self.learn_every = 1  # no. of experiences between updates to Q_online (3) speed up train
+        self.learn_every = 3  # no. of experiences between updates to Q_online (3) speed up train
         self.sync_every = 5e3  # no. of experiences between Q_target &
 
         self.setSeeds(seed)
@@ -171,7 +171,6 @@ class Agent:
         learn = 0
         logging = 0
 
-
         for e in range(episodes):
 
             state = self.env.reset()
@@ -179,30 +178,30 @@ class Agent:
             #Trade the market!
             while True:
 
-                start = time.time()
+ #               start = time.time()
                 # Run agent on the state
                 action = self.act(state)
-                actiontime += time.time() - start
+ #               actiontime += time.time() - start
 
-                start = time.time()
+ #               start = time.time()
                 # Agent performs action
                 next_state, reward, done, info = self.env.step(action)
-                envStep += time.time() - start
+ #               envStep += time.time() - start
 
-                start = time.time()
+ #               start = time.time()
                 # Remember
                 self.cache(state, next_state, action, reward, done)
-                cache += time.time() - start
+ #               cache += time.time() - start
 
-                start = time.time()
+ #               start = time.time()
                 # Learn
                 q, loss = self.learn()
-                learn += time.time() - start
+ #               learn += time.time() - start
 
-                start = time.time()
+ #               start = time.time()
                 # Logging
-                logger.log_step(reward, loss, q)
-                logging += time.time() - start
+                logger.log_step(reward, loss, q,info)
+ #               logging += time.time() - start
 
                 # Update state
                 state = next_state
@@ -213,19 +212,18 @@ class Agent:
 
             logger.log_episode()
 
-            print("Time taking action: ",actiontime)
-            print("Time taking env step: " , envStep)
-            print("Time caching: " , cache)
-            print("Time learning: " , learn)
-            print("Time logging: " , logging)
+ #           print("Time taking action: ",actiontime)
+ #           print("Time taking env step: " , envStep)
+ #           print("Time caching: " , cache)
+ #           print("Time learning: " , learn)
+ #           print("Time logging: " , logging)
 
-          #  if e % 20 == 0:
-            logger.record(episode=e, epsilon=self.exploration_rate, step=self.curr_step)
+            if e % 20 == 0:
+                logger.record(episode=e, epsilon=self.exploration_rate, step=self.curr_step)
+
 
 
 save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S") / "Mlp 4-10_10-20"
 save_dir.mkdir(parents=True)
-
-
 Agent(encoder=Mlp(4,10),feature_dim=10, hidden_dim=20,save_dir=save_dir,seed=1).train(int(5e3))#int(5e4))
 
