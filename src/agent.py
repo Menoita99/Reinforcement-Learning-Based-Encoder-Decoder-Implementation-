@@ -7,14 +7,13 @@ from metricLogger import MetricLogger
 import random
 from decoder import PolicyNet
 from collections import deque
-from pathlib import Path
-from datetime import datetime
-import time
+
 
 class Agent:
 
-    def __init__(self, save_dir,encoder,feature_dim,hidden_dim,seed,batch_size=32):
-        self.env = Environment()
+    def __init__(self, save_dir,encoder,feature_dim,hidden_dim,seed,batch_size=32,loadModelPath=None,useWindowState=False,
+                 windowSize=4, market="BTC_USD", timeframe="D",train=True,initialMoney=1000):
+        self.env = Environment(useWindowState,windowSize,market,timeframe,train,initialMoney)
         self.memory = deque(maxlen=100000)
         self.feature_dim = feature_dim
         self.save_dir = save_dir
@@ -24,14 +23,17 @@ class Agent:
         print("Using cuda",self.use_cuda)
         self.net = PolicyNet(encoder,feature_dim,hidden_dim, len(Actions),self.device).float()
 
+        if loadModelPath is not None:
+            self.net.load_state_dict(torch.load(loadModelPath,map_location=torch.device(self.device))["model"])
+
         if self.use_cuda:
             self.net = self.net.to(device=self.device)
 
         self.exploration_rate = 1
-        self.exploration_rate_decay = 0.99999975
-        self.exploration_rate_min = 0.05
+        self.exploration_rate_decay = 0.99999975 if loadModelPath is None else torch.load(loadModelPath,map_location=torch.device(self.device))["exploration_rate"]
+        self.exploration_rate_min = 0.1
 
-        self.save_every = 1e5  # no. of experiences between saving Policy Net
+        self.save_every = 5e5  # no. of experiences between saving Policy Net
 
         self.curr_step = 0
 
@@ -42,7 +44,7 @@ class Agent:
 
         self.burnin = 5e2  # min. experiences before training
         self.learn_every = 3  # no. of experiences between updates to Q_online (3) speed up train
-        self.sync_every = 5e3  # no. of experiences between Q_target &
+        self.sync_every = 1e3  # no. of experiences between Q_target &
 
         self.setSeeds(seed)
 
@@ -64,7 +66,10 @@ class Agent:
             else:
                 state = torch.tensor(state)
             action_values = self.net(state,model="policy")
-            action_idx = torch.argmax(action_values, axis=0).item()
+            if len(action_values) == 1:
+                action_idx = torch.argmax(action_values, axis=1).item()
+            else:
+                action_idx = torch.argmax(action_values, axis=0).item()
             action = Actions(action_idx)
 
         # decrease exploration_rate
@@ -218,12 +223,5 @@ class Agent:
  #           print("Time learning: " , learn)
  #           print("Time logging: " , logging)
 
-            if e % 20 == 0:
+            if e % 10 == 0:
                 logger.record(episode=e, epsilon=self.exploration_rate, step=self.curr_step)
-
-
-
-save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S") / "Mlp 4-10_10-20"
-save_dir.mkdir(parents=True)
-Agent(encoder=Mlp(4,10),feature_dim=10, hidden_dim=20,save_dir=save_dir,seed=1).train(int(5e3))#int(5e4))
-
