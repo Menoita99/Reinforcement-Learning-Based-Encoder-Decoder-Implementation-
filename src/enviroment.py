@@ -17,13 +17,14 @@ class Environment:
         self.currentCandle = 0
 
         if self.useWindowState:
-            self.candles = deque([None] * self.windowSize, maxlen=windowSize)
+            self.candles = deque([None] * self.windowSize, maxlen=self.windowSize)
         self._loadData(market,train)
 
         self.prevAction = Actions.Noop
         self.price1 = self.data[0][3]
         self.transaction = [Actions.Sell, 0]
-        self.money = 1000
+        self.initialMoney = initialMoney
+        self.money = self.initialMoney
 
 
 
@@ -63,8 +64,9 @@ class Environment:
     def reset(self):
         self.ownShare = False
         self.currentCandle = 0
+        self.money = self.initialMoney
         if self.useWindowState:
-            self.candles = [None] * self.windowSize
+            self.candles = deque([None] * self.windowSize, maxlen=self.windowSize)
         return self.initState()
 
 
