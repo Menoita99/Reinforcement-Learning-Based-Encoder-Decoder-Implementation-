@@ -43,7 +43,7 @@ class Agent:
         self.loss_fn = torch.nn.SmoothL1Loss()#Huber loss
 
         self.burnin = 5e2  # min. experiences before training
-        self.learn_every = 3  # no. of experiences between updates to Q_online (3) speed up train
+        self.learn_every = 1  # no. of experiences between updates to Q_online (3) speed up train
         self.sync_every = 1e3  # no. of experiences between Q_target &
 
         self.setSeeds(seed)

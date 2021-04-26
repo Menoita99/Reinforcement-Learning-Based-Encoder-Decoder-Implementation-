@@ -8,7 +8,7 @@ import numpy as np
 
 class Environment:
 
-    def __init__(self, useWindowState=False, windowSize=4, market="BTC_USD", timeframe="D",train=True,initialMoney=1000):
+    def __init__(self, useWindowState=False, windowSize=4, market="GOOGL", timeframe="D",train=True,initialMoney=1000):
         self.market = market
         self.timeframe = timeframe
         self.useWindowState = useWindowState
@@ -20,7 +20,6 @@ class Environment:
             self.candles = deque([None] * self.windowSize, maxlen=self.windowSize)
         self._loadData(market,train)
 
-        self.prevAction = Actions.Noop
         self.price1 = self.data[0][3]
         self.transaction = [Actions.Sell, 0]
         self.initialMoney = initialMoney
@@ -64,6 +63,7 @@ class Environment:
     def reset(self):
         self.ownShare = False
         self.currentCandle = 0
+        self.transaction = [Actions.Sell, 0]
         self.money = self.initialMoney
         if self.useWindowState:
             self.candles = deque([None] * self.windowSize, maxlen=self.windowSize)
@@ -94,7 +94,7 @@ class Environment:
         self.trade(action,price)
         currentMoney = self.money if self.transaction[1] == 0 else self.transaction[1] * price
 
-        output = state, self.reward(action), self.currentCandle+1 >= len(self.data), [currentMoney]
+        output = state, self.reward(action), self.currentCandle+1 >= len(self.data) or currentMoney<=10, [currentMoney]
         self.currentCandle += 1
         return output
 
@@ -105,19 +105,18 @@ class Environment:
     """
     def reward(self, action):
         price2 = self.data[self.currentCandle][3]
-        if self.prevAction != action and action != Actions.Noop:
+
+        if (action == Actions.Sell and self.ownShare) or (action == Actions.Buy and not self.ownShare):
             self.price1 = price2
 
         if action == Actions.Buy or (action == Actions.Noop and self.ownShare):
             reward = ((price2/self.price1) - 1)*100 - 1  # -1 to simulate tax
-            self.prevAction = action
             self.ownShare = True
-            return reward
         else:
             reward = ((self.price1/price2) - 1)*100 - 1  # -1 to simulate tax
-            self.prevAction = action
             self.ownShare = False
-            return reward
+
+        return reward
 
 
 
