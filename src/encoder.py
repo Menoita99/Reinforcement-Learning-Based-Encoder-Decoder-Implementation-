@@ -8,7 +8,7 @@ class Mlp(nn.Module):
         self.net = nn.Sequential(
             nn.Linear(input_dim, 128),
             nn.ReLU(),
-            #nn.BatchNorm1d(num_features=128),
+            nn.BatchNorm1d(num_features=128),
             nn.Linear(128, features_dim),
         )
 
@@ -30,11 +30,11 @@ class Cnn(nn.Module):
 
             nn.Conv2d(in_channels=8, out_channels=16, kernel_size=2, padding=1),  # output: 16 x 4 x 4
             nn.ReLU(),
-        #    nn.MaxPool2d(2, 2),  # output: 16 x 2 x 2
+            nn.MaxPool2d(2, 2),  # output: 16 x 2 x 2
 
             nn.Conv2d(in_channels=16, out_channels=32, kernel_size=2, padding=1),  # output: 32 x 4 x 4
             nn.ReLU(),
-        #    nn.MaxPool2d(2, 2),  # output: 32 x 1 x 1
+            nn.MaxPool2d(2, 2),  # output: 32 x 1 x 1
 
             nn.Flatten(),  # output batch_size x 128 , 128 was obtain experimentally
                            # without MaxPool = 1568
