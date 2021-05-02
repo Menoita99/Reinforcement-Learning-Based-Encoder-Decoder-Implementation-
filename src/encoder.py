@@ -8,7 +8,7 @@ class Mlp(nn.Module):
         self.net = nn.Sequential(
             nn.Linear(input_dim, 128),
             nn.ReLU(),
-            nn.BatchNorm1d(num_features=128),
+            #nn.BatchNorm1d(num_features=128),
             nn.Linear(128, features_dim),
         )
 

@@ -7,7 +7,7 @@ import torch
 
 from src.enviroment import Actions
 
-save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S") / "Cnn BTC_USD 128-64"
+save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S") / "MLP BTC_USD 4-10 hidden_10"
 save_dir.mkdir(parents=True)
 load_dir = Path("checkpoints") / "2021-04-27T00-35-01" / "Cnn BTC_USD 128-64" / "policy_net_38.chkpt"
 epochs =    int(10e3)
