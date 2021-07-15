@@ -113,3 +113,4 @@ class MetricLogger:
             plt.plot(getattr(self, f"moving_avg_{metric}"))
             plt.savefig(getattr(self, f"{metric}_plot"))
             plt.clf()
+

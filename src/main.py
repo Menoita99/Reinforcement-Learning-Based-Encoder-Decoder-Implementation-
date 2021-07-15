@@ -4,24 +4,18 @@ import pandas as pd
 import numpy as np
 
 from src.agent import Agent
-from src.encoder import Mlp, Cnn
+from src.encoder import Mlp, Cnn, Lstm
 import torch
 import matplotlib.pyplot as plt
 
 from src.enviroment import Actions
 
-save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S") / "MLP BTC_USD 4-10 hidden_10"
+save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S") / "Lstm(5,12,2,10,0.2)"
 save_dir.mkdir(parents=True)
 load_dir = Path("checkpoints") / "2021-04-27T00-48-26" / "MLP 4-10 BTC_USD" / "policy_net_38.chkpt"
-epochs =    int(10e3)
-#agent = Agent(encoder=Mlp(4,10),feature_dim=10, hidden_dim=20,save_dir=save_dir,seed=1,market="GOOGL")#,loadModelPath=load_dir)
-#agent = Agent(encoder=Cnn(),feature_dim=1568, hidden_dim=64,windowSize=4,useWindowState=True,save_dir=save_dir,seed=1,market="BTC_USD")
-#agent = Agent(encoder=None, feature_dim=4, hidden_dim=8,save_dir=save_dir,seed=1)
-#agent.train(epochs)
+epochs = int(10e6)
 
-def evaluate():
-    agent = Agent(encoder=Mlp(4,10),feature_dim=10, hidden_dim=20,save_dir=save_dir,seed=1,market="BTC_USD",loadModelPath=load_dir,train=False)
-
+def evaluate(agent):
     state = agent.env.reset()
     data = []
 
@@ -68,5 +62,11 @@ def evaluate():
     plt.savefig("results_actions.jpg")
     plt.clf()
 
-evaluate()
 
+#agent = Agent(encoder=Cnn(),feature_dim=1568, hidden_dim=64,windowSize=4,useWindowState=True,save_dir=save_dir,seed=1,market="BTC_USD")
+#agent = Agent(encoder=None, feature_dim=4, hidden_dim=8,save_dir=save_dir,seed=1)
+
+#
+agent = Agent(encoder=Lstm(5,12,2,10,0.2),feature_dim=10, hidden_dim=24,save_dir=save_dir,seed=453)#,loadModelPath=load_dir)
+agent.train(epochs)
+evaluate(agent)

@@ -7,12 +7,13 @@ from metricLogger import MetricLogger
 import random
 from decoder import PolicyNet
 from collections import deque
+from torch.utils.tensorboard import SummaryWriter
 
 
 class Agent:
 
     def __init__(self, save_dir,encoder,feature_dim,hidden_dim,seed,batch_size=32,loadModelPath=None,useWindowState=False,
-                 windowSize=4, market="BTC_USD", timeframe="D",train=True,initialMoney=1000):
+                 windowSize=4, market="EUR_USD", timeframe="H1",train=True,initialMoney=1000):
         self.env = Environment(useWindowState,windowSize,market,timeframe,train,initialMoney)
         self.memory = deque(maxlen=100000)
         self.feature_dim = feature_dim
@@ -30,7 +31,7 @@ class Agent:
             self.net = self.net.to(device=self.device)
 
         self.exploration_rate = 1
-        self.exploration_rate_decay = 0.99999975 if loadModelPath is None else torch.load(loadModelPath,map_location=torch.device(self.device))["exploration_rate"]
+        self.exploration_rate_decay = 0.9999975 if loadModelPath is None else torch.load(loadModelPath,map_location=torch.device(self.device))["exploration_rate"]
         self.exploration_rate_min = 0.1
 
         self.save_every = 5e5  # no. of experiences between saving Policy Net
@@ -38,15 +39,19 @@ class Agent:
         self.curr_step = 0
 
         self.batch_size = batch_size
-        self.gamma = .95
+        self.gamma = .99
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=0.00025)
         self.loss_fn = torch.nn.SmoothL1Loss()#Huber loss
 
         self.burnin = 5e2  # min. experiences before training
-        self.learn_every = 3  # no. of experiences between updates to Q_online (3) speed up train
-        self.sync_every = 1e3  # no. of experiences between Q_target &
+        self.learn_every = 1  # no. of experiences between updates to Q_online (3) speed up train
+        self.sync_every = 5e3  # no. of experiences between Q_target &
 
+        print(self.sync_every)
+
+        self.seed = seed
         self.setSeeds(seed)
+        self.writer = SummaryWriter()
 
     def setSeeds(self,seed):
         torch.manual_seed(seed)
@@ -65,7 +70,7 @@ class Agent:
                 state = torch.tensor(state).cuda()
             else:
                 state = torch.tensor(state)
-            action_values = self.net(state,model="policy")
+            action_values = self.net(state,model="policy",eval=True)
             if len(action_values) == 1:
                 action_idx = torch.argmax(action_values, axis=1).item()
             else:
@@ -109,6 +114,7 @@ class Agent:
 
     """Update policy action value (Q) function with a batch of experiences"""
     def learn(self):
+
         if self.curr_step % self.sync_every == 0:
             self.sync_Q_target()
 
@@ -132,6 +138,10 @@ class Agent:
 
         # Backpropagate loss through Q_online
         loss = self.update_Q_policy(td_est, td_tgt)
+
+        # print(td_est)
+        # print(td_tgt)
+        # print(f"loss: {loss}")
 
         return (td_est.mean().item(), loss)
 
@@ -164,8 +174,17 @@ class Agent:
         save_path = (self.save_dir / f"policy_net_{int(self.curr_step // self.save_every)}.chkpt")
         torch.save(dict(model=self.net.state_dict(), exploration_rate=self.exploration_rate),save_path,)
         print(f"policyNet saved to {save_path} at step {self.curr_step}")
-
-
+        with open(self.save_dir / "description_file", "a") as f:
+            f.write(str(self.net.state_dict()) + '\n')
+            f.write(f"batch_size:"+str(self.batch_size) + '\n')
+            f.write(f"gama:{self.gamma}\n")
+            f.write(f"explroation_rate:{self.exploration_rate}\n")
+            f.write(f"exploration_rate_decay :{ self.exploration_rate_decay }\n")
+            f.write(f"exploration_rate_min:{self.exploration_rate_min}\n")
+            f.write(f"burnin :{self.burnin }\n")
+            f.write(f"seed:{self.seed}\n")
+            f.write(f"learn_every:{self.learn_every}\n")
+            f.write(f"sync_every:{self.sync_every}\n")
 
     def train(self,episodes):
         logger = MetricLogger(self.save_dir)
@@ -176,6 +195,7 @@ class Agent:
         learn = 0
         logging = 0
 
+        self.net.train()
         for e in range(episodes):
 
             state = self.env.reset()
@@ -215,6 +235,8 @@ class Agent:
                 if done:
                     break
 
+                # self.printStatistics(loss,e)
+
             logger.log_episode()
 
  #           print("Time taking action: ",actiontime)
@@ -223,6 +245,11 @@ class Agent:
  #           print("Time learning: " , learn)
  #           print("Time logging: " , logging)
 
-            if e % 10 == 0:
+            if e % 100 == 0:
                 logger.record(episode=e, epsilon=self.exploration_rate, step=self.curr_step)
 
+        self.save()
+
+    def printStatistics(self,loss,episode):
+        self.writer.add_scalar("Loss/episode", 0 if loss is None else loss.item(), episode)
+        self.writer.flush()

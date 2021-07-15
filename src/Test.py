@@ -30,11 +30,11 @@ class Test(nn.Module):
             input = input.unsqueeze(0).unsqueeze(0)
         return self.net(input)
 
-
-test = Test()
-state = [[1.,1.,1.,1.],[1.,1.,1.,1.],[1.,1.,1.,1.],[1.,1.,1.,1.]]
-input = torch.tensor(state)
-print(test(input).size())
+#
+# test = Test()
+# state = [[1.,1.,1.,1.],[1.,1.,1.,1.],[1.,1.,1.,1.],[1.,1.,1.,1.]]
+# input = torch.tensor(state)
+# print(test(input).size())
 
 """
 df = pd.read_csv(r'data\{}.csv'.format('BTC_USD'))
@@ -50,3 +50,27 @@ for index, rows in df.iterrows():
 
 print(Row_list)
 """
+
+
+x = torch.tensor([[1, 2, 3, 4],
+                  [1, 2, 3, 4],
+                  [1, 2, 3, 4],
+                  [1, 2, 3, 4],
+                  [1, 2, 3, 4],
+                  [1, 2, 3, 4],
+                  [1, 2, 3, 4]])
+
+
+# print(x.size())
+# print(x)
+# print(len(x.size()))
+# x = torch.unsqueeze(x, 1)
+# print(x.size())
+# print(x)
+# print(len(x.size()))
+
+x =torch.tensor([1, 2, 3, 4])
+x = torch.unsqueeze(torch.unsqueeze(x, 0), 1)
+print(x.size())
+print(x)
+print(len(x.size()))

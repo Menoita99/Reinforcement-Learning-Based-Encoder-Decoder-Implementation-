@@ -10,6 +10,8 @@ class PolicyNet(nn.Module):
         self.policy = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
             nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
             nn.Linear(hidden_dim, output_dim),
         ).to(device=device)
 
@@ -22,8 +24,10 @@ class PolicyNet(nn.Module):
         for p in self.target.parameters():
             p.requires_grad = False
 
-    def forward(self, input, model):
+    def forward(self, input, model,eval=False):
         if model == "policy":
+            self.policy.eval() if eval else self.policy.train()
             return self.policy(input)
         elif model == "target":
+            self.target.eval() if eval else self.target.train()
             return self.target(input)

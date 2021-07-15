@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 
 
@@ -14,7 +15,7 @@ class Mlp(nn.Module):
 
     def forward(self, input):
         self.train()
-        if len(input) == 4:
+        if len(input) == 5:
             input = input.unsqueeze(0)
             self.eval()
         return self.net(input)
@@ -50,24 +51,47 @@ class Cnn(nn.Module):
 
 class Gru(nn.Module):
 
-    def __init__(self, input_dim, hidden_dim, output_dim, n_layers, drop_prob=0.2):
-        super(self).__init__()
+    def __init__(self, input_dim, hidden_dim, num_layers, output_dim,dropout):
+        super(Gru, self).__init__()
         self.hidden_dim = hidden_dim
-        self.n_layers = n_layers
+        self.num_layers = num_layers
 
-        self.gru = nn.GRU(input_dim, hidden_dim, n_layers, batch_first=True, dropout=drop_prob)
-        self.fc = nn.Linear(hidden_dim, output_dim)
-        self.relu = nn.ReLU()
+        self.fc_hidden_dim = 10
 
-    def forward(self, x, h):
-        out, h = self.gru(x, h)
-        out = self.fc(self.relu(out[:, -1]))
-        return out, h
+        self.gru = nn.GRU(input_dim, hidden_dim, num_layers, batch_first=True,dropout=dropout).cuda()
+        self.fc = nn.Linear(hidden_dim, output_dim).cuda()
 
-    def init_hidden(self, batch_size):
-        weight = next(self.parameters()).data
-        hidden = weight.new(self.n_layers, batch_size, self.hidden_dim).zero_().to('cuda')
-        return hidden
+
+    def forward(self, x):
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_dim).requires_grad_().cuda()
+        out, _ = self.gru(x, (h0.detach())) #out, (hn, cn)
+        out = self.fc(out[:, -1, :])
+        # out = self.fc1(torch.relu(out))
+        return out
+
+class Lstm(nn.Module):
+    def __init__(self, input_dim, hidden_dim, num_layers, output_dim,dropout):
+        super(Lstm, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.num_layers = num_layers
+
+        self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers, batch_first=True,dropout=dropout).cuda()
+        self.fc = nn.Linear(hidden_dim, output_dim).cuda()
+
+    def forward(self, x):
+        if(len(x.size()) == 2):
+            x = torch.unsqueeze(x, 1)
+        if (len(x.size()) == 1):
+            x = torch.unsqueeze(torch.unsqueeze(x, 0), 1)
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_dim).requires_grad_().cuda()
+        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_dim).requires_grad_().cuda()
+        out,(_,_) = self.lstm(x, (h0.detach(), c0.detach())) #out, (hn, cn)
+        out = self.fc(out[:, -1, :])
+        return out
+
+    def convertTo3D(self,x):
+        pass
+
 
 
 class CnnGru(nn.Module):
