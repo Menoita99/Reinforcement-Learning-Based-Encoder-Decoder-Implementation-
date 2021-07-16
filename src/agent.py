@@ -30,8 +30,8 @@ class Agent:
         if self.use_cuda:
             self.net = self.net.to(device=self.device)
 
-        self.exploration_rate = 1
-        self.exploration_rate_decay = 0.9999975 if loadModelPath is None else torch.load(loadModelPath,map_location=torch.device(self.device))["exploration_rate"]
+        self.exploration_rate = 1 if loadModelPath is None else torch.load(loadModelPath,map_location=torch.device(self.device))["exploration_rate"]
+        self.exploration_rate_decay = 0.9999975
         self.exploration_rate_min = 0.1
 
         self.save_every = 5e5  # no. of experiences between saving Policy Net

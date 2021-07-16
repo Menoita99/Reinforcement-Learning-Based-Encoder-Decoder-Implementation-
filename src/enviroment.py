@@ -113,7 +113,7 @@ class Environment:
         if (self.position == None):
             return candle + (0,)
         else:
-            return candle + ((.5,) if self.position[0] == Actions.Buy else (-.5,))
+            return candle + ((1,) if self.position[0] == Actions.Buy else (-1,))
 
 
 
@@ -130,8 +130,6 @@ class Environment:
         # print(str(self.getCurrentMoney(self.currentPrice)) + " " + str(self.position))
 
         self.currentPrice = round((state[3] / 100 + 1) * self.currentPrice, 5)
-
-        # print(self.currentPrice)
 
         try:
             self.trade(action, self.currentPrice)

@@ -12,7 +12,7 @@ from src.enviroment import Actions
 
 save_dir = Path("checkpoints") / datetime.now().strftime("%Y-%m-%dT%H-%M-%S") / "Lstm(5,12,2,10,0.2)"
 save_dir.mkdir(parents=True)
-load_dir = Path("checkpoints") / "2021-04-27T00-48-26" / "MLP 4-10 BTC_USD" / "policy_net_38.chkpt"
+load_dir = Path("checkpoints") / "2021-07-15T01-48-18" / "Lstm(5,12,2,10,0.2)" / "policy_net_30.chkpt"
 epochs = int(10e6)
 
 def evaluate(agent):
@@ -67,6 +67,6 @@ def evaluate(agent):
 #agent = Agent(encoder=None, feature_dim=4, hidden_dim=8,save_dir=save_dir,seed=1)
 
 #
-agent = Agent(encoder=Lstm(5,12,2,10,0.2),feature_dim=10, hidden_dim=24,save_dir=save_dir,seed=453)#,loadModelPath=load_dir)
+agent = Agent(encoder=Lstm(5,12,2,10,0.2),feature_dim=10, hidden_dim=24,save_dir=save_dir,seed=453,loadModelPath=load_dir)
 agent.train(epochs)
 evaluate(agent)
