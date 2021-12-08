@@ -23,30 +23,28 @@ class Mlp(nn.Module):
 
 class Cnn(nn.Module):
 
-    def __init__(self):
+    def __init__(self,channels,output_dim):
         super().__init__()
         self.net = nn.Sequential(  # dim 4 x 4
-            nn.Conv2d(in_channels=1, out_channels=8, kernel_size=2, padding=1),  # output: 8 x 4 x 4
+            nn.Conv2d(in_channels=channels, out_channels=32, kernel_size=1, stride=4),
             nn.ReLU(),
-
-            nn.Conv2d(in_channels=8, out_channels=16, kernel_size=2, padding=1),  # output: 16 x 4 x 4
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=1, stride=2),
             nn.ReLU(),
-            nn.MaxPool2d(2, 2),  # output: 16 x 2 x 2
-
-            nn.Conv2d(in_channels=16, out_channels=32, kernel_size=2, padding=1),  # output: 32 x 4 x 4
+            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=1, stride=1),
             nn.ReLU(),
-            nn.MaxPool2d(2, 2),  # output: 32 x 1 x 1
-
-            nn.Flatten(),  # output batch_size x 128 , 128 was obtain experimentally
-                           # without MaxPool = 1568
+            nn.Flatten(),
+            # nn.Linear(3136, 512),
+            # nn.ReLU(),
+            # nn.Linear(512, output_dim)
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, output_dim)
         )
 
     def forward(self, input):
-        if len(input.size()) == 3:
-            input = input.unsqueeze(1)
-        elif len(input.size()) == 2:
-            input = input.unsqueeze(0).unsqueeze(0)
-        return self.net(input)
+        if len(input.size()) == 2:
+            return self.net(input.unsqueeze(0).unsqueeze(0))
+        return self.net(input.unsqueeze(1))
 
 
 class Gru(nn.Module):

@@ -14,7 +14,7 @@ class Agent:
 
     def __init__(self, save_dir,encoder,feature_dim,hidden_dim,seed,batch_size=32,loadModelPath=None,useWindowState=False,
                  windowSize=4, market="EUR_USD", timeframe="H1",train=True,initialMoney=1000):
-        self.env = Environment(useWindowState,windowSize,market,timeframe,train,initialMoney)
+        self.env = Environment(useWindowState=useWindowState,windowSize=windowSize,market=market,initialMoney=initialMoney)
         self.memory = deque(maxlen=100000)
         self.feature_dim = feature_dim
         self.save_dir = save_dir
@@ -31,7 +31,7 @@ class Agent:
             self.net = self.net.to(device=self.device)
 
         self.exploration_rate = 1 if loadModelPath is None else torch.load(loadModelPath,map_location=torch.device(self.device))["exploration_rate"]
-        self.exploration_rate_decay = 0.9999975
+        self.exploration_rate_decay = 0.99999975
         self.exploration_rate_min = 0.1
 
         self.save_every = 5e5  # no. of experiences between saving Policy Net
@@ -175,7 +175,7 @@ class Agent:
         torch.save(dict(model=self.net.state_dict(), exploration_rate=self.exploration_rate),save_path,)
         print(f"policyNet saved to {save_path} at step {self.curr_step}")
         with open(self.save_dir / "description_file", "a") as f:
-            f.write(str(self.net.state_dict()) + '\n')
+            f.write(str(self.net) + '\n')
             f.write(f"batch_size:"+str(self.batch_size) + '\n')
             f.write(f"gama:{self.gamma}\n")
             f.write(f"explroation_rate:{self.exploration_rate}\n")
@@ -245,11 +245,8 @@ class Agent:
  #           print("Time learning: " , learn)
  #           print("Time logging: " , logging)
 
-            if e % 100 == 0:
+            if e % 1 == 0:
                 logger.record(episode=e, epsilon=self.exploration_rate, step=self.curr_step)
 
         self.save()
 
-    def printStatistics(self,loss,episode):
-        self.writer.add_scalar("Loss/episode", 0 if loss is None else loss.item(), episode)
-        self.writer.flush()

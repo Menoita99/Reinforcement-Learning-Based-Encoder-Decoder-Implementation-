@@ -1,0 +1,610 @@
+PolicyNet(
+  (policy): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+  (target): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+)
+batch_size:32
+gama:0.99
+explroation_rate:0.8824968887801629
+exploration_rate_decay :0.99999975
+exploration_rate_min:0.1
+burnin :500.0
+seed:453
+learn_every:1
+sync_every:5000.0
+PolicyNet(
+  (policy): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+  (target): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+)
+batch_size:32
+gama:0.99
+explroation_rate:0.7788007587066462
+exploration_rate_decay :0.99999975
+exploration_rate_min:0.1
+burnin :500.0
+seed:453
+learn_every:1
+sync_every:5000.0
+PolicyNet(
+  (policy): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+  (target): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+)
+batch_size:32
+gama:0.99
+explroation_rate:0.6872892465382127
+exploration_rate_decay :0.99999975
+exploration_rate_min:0.1
+burnin :500.0
+seed:453
+learn_every:1
+sync_every:5000.0
+PolicyNet(
+  (policy): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+  (target): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+)
+batch_size:32
+gama:0.99
+explroation_rate:0.6065306217620327
+exploration_rate_decay :0.99999975
+exploration_rate_min:0.1
+burnin :500.0
+seed:453
+learn_every:1
+sync_every:5000.0
+PolicyNet(
+  (policy): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+  (target): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+)
+batch_size:32
+gama:0.99
+explroation_rate:0.5352613866548668
+exploration_rate_decay :0.99999975
+exploration_rate_min:0.1
+burnin :500.0
+seed:453
+learn_every:1
+sync_every:5000.0
+PolicyNet(
+  (policy): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+  (target): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+)
+batch_size:32
+gama:0.99
+explroation_rate:0.4723665084070666
+exploration_rate_decay :0.99999975
+exploration_rate_min:0.1
+burnin :500.0
+seed:453
+learn_every:1
+sync_every:5000.0
+PolicyNet(
+  (policy): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+  (target): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+)
+batch_size:32
+gama:0.99
+explroation_rate:0.41686197403320696
+exploration_rate_decay :0.99999975
+exploration_rate_min:0.1
+burnin :500.0
+seed:453
+learn_every:1
+sync_every:5000.0
+PolicyNet(
+  (policy): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+  (target): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+)
+batch_size:32
+gama:0.99
+explroation_rate:0.3678793951350652
+exploration_rate_decay :0.99999975
+exploration_rate_min:0.1
+burnin :500.0
+seed:453
+learn_every:1
+sync_every:5000.0
+PolicyNet(
+  (policy): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+  (target): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+)
+batch_size:32
+gama:0.99
+explroation_rate:0.32465242165301644
+exploration_rate_decay :0.99999975
+exploration_rate_min:0.1
+burnin :500.0
+seed:453
+learn_every:1
+sync_every:5000.0
+PolicyNet(
+  (policy): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+  (target): Sequential(
+    (0): Cnn(
+      (net): Sequential(
+        (0): Conv2d(1, 32, kernel_size=(1, 1), stride=(4, 4))
+        (1): ReLU()
+        (2): Conv2d(32, 64, kernel_size=(1, 1), stride=(2, 2))
+        (3): ReLU()
+        (4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+        (5): ReLU()
+        (6): Flatten(start_dim=1, end_dim=-1)
+        (7): Linear(in_features=128, out_features=64, bias=True)
+        (8): ReLU()
+        (9): Linear(in_features=64, out_features=16, bias=True)
+      )
+    )
+    (1): Sequential(
+      (0): Linear(in_features=16, out_features=24, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=24, out_features=24, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=24, out_features=24, bias=True)
+      (5): ReLU()
+      (6): Linear(in_features=24, out_features=4, bias=True)
+    )
+  )
+)
+batch_size:32
+gama:0.99
+explroation_rate:0.28650475204372416
+exploration_rate_decay :0.99999975
+exploration_rate_min:0.1
+burnin :500.0
+seed:453
+learn_every:1
+sync_every:5000.0
